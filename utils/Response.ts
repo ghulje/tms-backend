@@ -1,4 +1,4 @@
-export default class ResponseHelper {
+export default class Response {
     protected data: any;
     protected message: string;
     protected status: number;
@@ -9,26 +9,26 @@ export default class ResponseHelper {
         this.status = 200;
     }
 
-    public setData(data: any): ResponseHelper {
+    public setData(data: any): Response {
         this.data = data;
 
         return this;
     }
 
-    public setMessage(message: string): ResponseHelper {
+    public setMessage(message: string): Response {
         this.message = message;
 
         return this;
     }
 
-    public setStatus(status: number): ResponseHelper {
+    public setStatus(status: number): Response {
         this.status = status;
 
         return this;
     }
 
     public send(): any {
-        return Response.json({
+        return globalThis.Response.json({
             data: this.data,
             message: this.message,
             status: this.status
@@ -38,7 +38,7 @@ export default class ResponseHelper {
     }
 
     public stream(options: ResponseInit = {}): any {
-        return new Response(Bun.file(this.data), {
+        return new globalThis.Response(Bun.file(this.data), {
             ...options,
             status: this.status
         });
