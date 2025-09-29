@@ -22,8 +22,9 @@ Designed for backend purposes, using [Knex](https://knexjs.org) for Model and Mi
 ### Controller
 Logical processes
 
-### Migrations
-Database migrations
+### Database
+- Migrations
+- Seeders
 
 ### Public
 For public assets
@@ -43,7 +44,9 @@ Install project dependencies.
 bun install
 ```
 
-### Migrations
+### Database
+
+#### Migrations
 To migrate the migrations, run :
 
 ```bash
@@ -54,6 +57,13 @@ To rollback the migrations, run :
 
 ```bash
 bun run knex migrate:rollback
+```
+
+#### Seeders
+To execute seeder, run :
+
+```bash
+bun run knex seed:run
 ```
 
 ### Run the Project
@@ -73,7 +83,6 @@ bun start
 ## Todos
 - [ ] Model
 - [ ] Soft Deletes
-- [ ] Seeder
 
 ## Contributors
 - [Hafiizh Ghulam](mailto:ghulam@jejeharapan.com)
