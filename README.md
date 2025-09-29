@@ -80,6 +80,10 @@ bun start
 ## Upcoming Features
 - [ ] Model
 - [ ] Soft Deletes
+- [ ] Exception Handler
+- [ ] Job Dispatch / Background Tasks
+- [ ] Middleware
+- [ ] Unit Tests
 - [ ] Mail Service
 - [ ] Export PDF
 
