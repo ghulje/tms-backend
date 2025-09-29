@@ -31,9 +31,6 @@ For public assets
 
 ### Resources
 - Views
-- Mail View
-- Pdf
-- Etc
 
 ## Usage
 
@@ -80,9 +77,11 @@ To run on production mode, run :
 bun start
 ```
 
-## Todos
+## Upcoming Features
 - [ ] Model
 - [ ] Soft Deletes
+- [ ] Mail Service
+- [ ] Export PDF
 
 ## Contributors
 - [Hafiizh Ghulam](mailto:ghulam@jejeharapan.com)
