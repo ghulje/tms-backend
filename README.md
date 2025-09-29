@@ -64,13 +64,15 @@ bun run knex seed:run
 ```
 
 ### Run the Project
+
+#### Run on Development
 To run the project, run :
 
 ```bash
 bun dev
 ```
 
-### Run on Production
+#### Run on Production
 To run on production mode, run :
 
 ```bash
