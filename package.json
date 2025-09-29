@@ -6,6 +6,7 @@
   "main": "index.tsx",
   "module": "index.tsx",
   "scripts": {
+    "knex": "bun run utils/knex.ts",
     "dev": "bun --hot index.tsx",
     "build": "bun build resources/index.html --outdir=dist --sourcemap --target=browser --minify --define:process.env.NODE_ENV='\\\"production\\\"' --env='BUN_PUBLIC_*'",
     "start": "NODE_ENV=production bun index.tsx"
