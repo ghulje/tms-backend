@@ -1,6 +1,6 @@
 import {spawn} from "child_process";
 
-const child = spawn("knex", process.argv.slice(2), {
+const child = spawn("bunx", ["knex", ...process.argv.slice(2)], {
     stdio: "inherit",
     env: process.env
 });
