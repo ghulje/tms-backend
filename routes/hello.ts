@@ -1,12 +1,13 @@
 import HelloController from "@/app/controllers/HelloController";
+import Router from "@/utils/Router";
 
-export default {
-    "hello": {
+export default new Router().prefix("hello").group({
+    "/": {
         GET: new HelloController().hello,
         PUT: new HelloController().hello
     },
 
-    "hello/:name": {
+    ":name": {
         GET: new HelloController().helloName
     }
-};
+});

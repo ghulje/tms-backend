@@ -5,7 +5,7 @@ export function up(knex: Knex): void {
     return knex.schema.createTable(TestModel.table, (table: Knex.TableBuilder) => {
         table.bigIncrements("id");
         table.string("name");
-        table.timestamps();
+        table.timestamps(true, true);
     });
 }
 

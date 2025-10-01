@@ -98,7 +98,7 @@ bun start
 ```
 
 ## Upcoming Features
-- [ ] Model
+- [ ] Validate Request
 - [ ] Soft Deletes
 - [ ] Exception Handler
 - [ ] Job Dispatch / Background Tasks
