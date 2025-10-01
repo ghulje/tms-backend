@@ -64,8 +64,42 @@ export default class TestController extends BaseController {
 ```
 
 ### Database
-- Migrations
-- Seeders
+
+#### Migrations
+Example :
+
+```ts
+import type {Knex} from "knex";
+import TestModel from "@/app/models/TestModel";
+
+export function up(knex: Knex): void {
+    return knex.schema.createTable(TestModel.table, (table: Knex.TableBuilder) => {
+        table.bigIncrements("id");
+        table.string("name");
+        table.timestamps(true, true);
+    });
+}
+
+export function down(knex: Knex): void {
+    return knex.schema.dropTable(TestModel.table);
+}
+```
+
+#### Seeders
+Example :
+
+```ts
+import type {Knex} from "knex";
+import TestModel, {TestColumns} from "@/app/models/TestModel";
+
+export async function seed(knex: Knex): Promise<void> {
+    for (const name of ["Name 1", "Name 2", "Name 3"]) {
+        await TestModel.query<TestColumns>(knex).insert({
+            name: name
+        });
+    }
+}
+```
 
 ### Public
 For public assets
@@ -75,6 +109,29 @@ For public assets
 
 ### Ace
 Any commands for development
+
+```bash
+Usage: ace [options] [command]
+
+Ace for your commander
+Author: Hafiizh Ghulam <ghulam@jejeharapan.com>
+
+Options:
+  -v, --version     Show the current version
+  -h, --help        display help for command
+
+Commands:
+  db:seed           Run database seeders
+  migrate:fresh     Rollback all migrations and re-run migrations
+  migrate:latest    Run latest migration
+  migrate:rollback  Rollback the latest migrations
+  help [command]    display help for command
+
+Examples:
+  $ bun ace --help
+  $ bun ace --version
+  $ bun ace migrate:latest
+```
 
 ## Usage
 
