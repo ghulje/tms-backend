@@ -19,8 +19,11 @@ Designed for backend purposes, using [Knex](https://knexjs.org) for Model and Mi
 
 ## Features
 
-### Controller
+### Controllers
 Logical processes
+
+### Models
+Database table model
 
 ### Database
 - Migrations
@@ -31,6 +34,9 @@ For public assets
 
 ### Resources
 - Views
+
+### Ace
+Any commands for development
 
 ## Usage
 
