@@ -78,7 +78,7 @@ bun ace migrate:rollback
 To execute seeder, run :
 
 ```bash
-bun ace seed:run
+bun ace db:seed
 ```
 
 ### Run the Project
