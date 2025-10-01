@@ -41,26 +41,44 @@ Install project dependencies.
 bun install
 ```
 
+### Available Commands
+To see list of available commands, run.
+
+```bash
+bun ace
+bun ace help
+bun ace --h
+bun ace --help
+```
+
+To see help of specific command, run :
+
+```bash
+bun ace help migrate:latest
+bun ace migrate:latest --h
+bun ace migrate:latest --help
+```
+
 ### Database
 
 #### Migrations
 To migrate the migrations, run :
 
 ```bash
-bun run knex migrate:latest
+bun ace migrate:latest
 ```
 
 To rollback the migrations, run :
 
 ```bash
-bun run knex migrate:rollback
+bun ace migrate:rollback
 ```
 
 #### Seeders
 To execute seeder, run :
 
 ```bash
-bun run knex seed:run
+bun ace seed:run
 ```
 
 ### Run the Project
