@@ -22,6 +22,22 @@ Designed for backend purposes, using [Knex](https://knexjs.org) for Model and Mi
 ### Controllers
 Logical processes
 
+Example :
+
+```ts
+import {BunRequest} from "bun";
+import BaseController from "@/app/controllers/BaseController";
+
+export default class HelloController extends BaseController {
+    public async hello(request: BunRequest): Response {
+        return super.response().setData({
+            message: "Hello, world!",
+            method: request.method
+        }).send();
+    }
+}
+```
+
 ### Models
 Database table model
 
