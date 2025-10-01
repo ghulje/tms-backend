@@ -1,8 +1,9 @@
 import {BunRequest} from "bun";
+import Response from "@/utils/Response";
 import {defineValue, isNotEmpty} from "@/utils/utils";
 
 export default class BaseController {
-    public async parse(request: BunRequest) {
+    public async parse(request: BunRequest): FormData {
         const contentType = defineValue(request.headers.get("content-type"), "");
         const formData = new FormData();
 
@@ -44,5 +45,9 @@ export default class BaseController {
         }
 
         return formData;
+    }
+
+    public response(): Response {
+        return new Response();
     }
 }
