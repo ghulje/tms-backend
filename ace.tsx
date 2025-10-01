@@ -66,6 +66,7 @@ program
         const spinner = ora(new Chalk().setValue("Seeding...").info().show()).start();
         try {
             const logs = (await knex.seed.run()).flat();
+            spinner.succeed("Seeding finished");
 
             if (logs.length > 0) logs.forEach((seeder: string) => spinner.succeed(path.basename(seeder)));
             else spinner.succeed("No seeders were run.");
