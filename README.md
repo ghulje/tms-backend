@@ -41,6 +41,20 @@ export default class HelloController extends BaseController {
 ### Models
 Database table model
 
+Example :
+
+```ts
+import BaseModel, {BaseColumns} from "@/app/models/BaseModel";
+
+export interface TestColumns extends BaseColumns {
+    name: string;
+}
+
+export default class TestModel extends BaseModel {
+    public static table: string = "tests";
+}
+```
+
 #### Fetch All
 Example :
 
@@ -180,10 +194,31 @@ bun ace migrate:latest --help
 ### Database
 
 #### Migrations
+To fresh or drop all table and re-run the migrations, run :
+
+```bash
+bun ace migrate:fresh
+```
+
+Example :
+
+```bash
+✔ Rolled back all migrations
+✔ Batch 1 finished
+✔ 20250929_000001_tests.ts
+```
+
 To migrate the migrations, run :
 
 ```bash
 bun ace migrate:latest
+```
+
+Example :
+
+```bash
+✔ Batch 1 finished
+✔ 20250929_000001_tests.ts
 ```
 
 To rollback the migrations, run :
@@ -192,10 +227,28 @@ To rollback the migrations, run :
 bun ace migrate:rollback
 ```
 
+Example :
+
+```bash
+✔ Batch 1 finished
+✔ 20250929_000001_tests.ts
+```
+
 To see migrations status, run :
 
 ```bash
 bun ace migrate:status
+```
+
+Example :
+
+```bash
+✔ Completed Migrations :
+✔ No migrations were completed.
+
+
+✔ Pending Migrations :
+✔ 20250929_000001_tests.ts
 ```
 
 #### Seeders
@@ -203,6 +256,13 @@ To execute seeder, run :
 
 ```bash
 bun ace db:seed
+```
+
+Example :
+
+```bash
+✔ Seeding finished
+✔ 20250929_000001_seeder_test.ts
 ```
 
 ### Run the Project
