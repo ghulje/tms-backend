@@ -10,7 +10,7 @@
 
 # Framework for Bun
 A javascript framework using Bun runtime.
-Designed for backend purposes, using [Knex](https://knexjs.org) for Model and Migrations.
+Designed for backend purposes, using [Knex](https://knexjs.org) for Migrations and Seeders.
 
 ## Tech Stacks
 - [Bun](https://bun.com)
@@ -29,7 +29,7 @@ import {BunRequest} from "bun";
 import BaseController from "@/app/controllers/BaseController";
 
 export default class HelloController extends BaseController {
-    public async hello(request: BunRequest): Response {
+    public async hello(request: BunRequest): Promise<Response> {
         return super.response().setData({
             message: "Hello, world!",
             method: request.method
@@ -50,7 +50,7 @@ import BaseController from "@/app/controllers/BaseController";
 import TestModel, {TestColumns} from "@/app/models/TestModel";
 
 export default class TestController extends BaseController {
-    public async get(request: BunRequest): Response {
+    public async get(request: BunRequest): Promise<Response> {
         const tests = await TestModel.all<TestColumns>();
 
         return super.response().setData(tests).send();
@@ -67,7 +67,7 @@ import BaseController from "@/app/controllers/BaseController";
 import TestModel, {TestColumns} from "@/app/models/TestModel";
 
 export default class TestController extends BaseController {
-    public async add(request: BunRequest): Response {
+    public async add(request: BunRequest): Promise<Response> {
         const body = await super.parse(request);
 
         const tests = await TestModel.create<TestColumns>({
@@ -141,6 +141,7 @@ Commands:
   migrate:fresh     Rollback all migrations and re-run migrations
   migrate:latest    Run latest migration
   migrate:rollback  Rollback the latest migrations
+  migrate:status    List migrations status
   help [command]    display help for command
 
 Examples:
@@ -191,6 +192,12 @@ To rollback the migrations, run :
 bun ace migrate:rollback
 ```
 
+To see migrations status, run :
+
+```bash
+bun ace migrate:status
+```
+
 #### Seeders
 To execute seeder, run :
 
@@ -218,8 +225,10 @@ bun start
 - [ ] Validate Request
 - [ ] Soft Deletes
 - [ ] Exception Handler
-- [ ] Job Dispatch / Background Tasks
 - [ ] Middleware
+  
+## Backlog
+- [ ] Job Dispatch / Background Tasks
 - [ ] Unit Tests
 - [ ] Mail Service
 - [ ] Import Excel

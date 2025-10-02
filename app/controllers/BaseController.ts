@@ -3,13 +3,13 @@ import Response from "@/utils/Response";
 import {defineValue, isNotEmpty} from "@/utils/utils";
 
 export default class BaseController {
-    public async parse(request: BunRequest): FormData {
+    public async parse(request: BunRequest): Promise<FormData> {
         const contentType = defineValue(request.headers.get("content-type"), "");
         const formData = new FormData();
 
         try {
             for (const [key, value] of Object.entries(request.params)) {
-                formData.append(key, value);
+                formData.append(key, value as string);
             }
 
             const url = new URL(request.url);

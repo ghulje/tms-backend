@@ -13,17 +13,17 @@ export interface BaseColumns {
 export default class BaseModel {
     public static table: string;
 
-    public static query<T extends typeof BaseColumns>(_knex: Knex = null): Knex<InstanceType<T>> {
-        if (isEmpty(_knex)) return knex<InstanceType<T>>(KnexConfig).from(this.table);
+    public static query<T extends BaseColumns>(_knex: Knex = null): Knex<T> {
+        if (isEmpty(_knex)) return knex<T>(KnexConfig).from(this.table);
 
-        return _knex<InstanceType<T>>(this.table);
+        return _knex<T>(this.table);
     }
 
-    public static async all<T extends typeof BaseColumns>(payload: object): Array<InstanceType<T>> {
+    public static async all<T extends BaseColumns>(): Promise<Array<T>> {
         return await this.query<T>().select();
     }
 
-    public static async create<T extends typeof BaseColumns>(payload: object): InstanceType<T> {
+    public static async create<T extends BaseColumns>(payload: object): Promise<T> {
         const [row] = await this.query<T>().insert(payload).returning("*");
 
         return row;

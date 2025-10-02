@@ -101,4 +101,29 @@ program
         }
     });
 
+program
+    .command("migrate:status")
+    .description("List migrations status")
+    .action(async () => {
+        const spinner = ora(new Chalk().setValue("Fetching...").info().show()).start();
+        try {
+            const [completed, pending] = await knex.migrate.list();
+
+            spinner.succeed("Completed Migrations :");
+            if (completed.length > 0) completed.forEach((migration: {name: string}) => spinner.succeed(migration.name));
+            else spinner.succeed("No migrations were completed.");
+
+            console.log(os.EOL);
+
+            spinner.succeed("Pending Migrations :");
+            if (pending.length > 0) pending.forEach((migration: {file: string, directory: string}) => spinner.succeed(migration.file));
+            else spinner.succeed("No migrations were pending.");
+        } catch (e) {
+            spinner.fail(`Fetching failed : ${e.message}`);
+        } finally {
+            await knex.destroy();
+            spinner.stop();
+        }
+    });
+
 program.parse();
