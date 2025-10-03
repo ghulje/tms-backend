@@ -27,7 +27,7 @@ export default class Response {
         return this;
     }
 
-    public send(): any {
+    public send(): globalThis.Response {
         return globalThis.Response.json({
             data: this.data,
             message: this.message,
@@ -37,7 +37,7 @@ export default class Response {
         });
     }
 
-    public stream(options: ResponseInit = {}): any {
+    public stream(options: ResponseInit = {}): globalThis.Response {
         return new globalThis.Response(Bun.file(this.data), {
             ...options,
             status: this.status

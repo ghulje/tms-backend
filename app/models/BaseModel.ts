@@ -1,31 +1,89 @@
-import type {Knex} from "knex";
-import knex from "knex";
-import KnexConfig from "@/knexfile";
-import {isEmpty} from "@/utils/utils";
+import {DateTime} from "luxon";
+import {
+    Constructor,
+    JSONSchema,
+    Model,
+    ModelOptions,
+    QueryBuilder,
+    QueryBuilderType,
+    QueryContext,
+    TransactionOrKnex
+} from "objection";
+import {relative, sep} from "path";
+import {fileURLToPath} from "url";
+import {defineValue, isEmpty} from "@/utils/utils";
+import Str from "@/utils/Str";
 
 export interface BaseColumns {
-    id: bigint;
+    id: bigint | number;
     created_at: Date | string;
     updated_at: Date | string;
     deleted_at: Date | string | null;
 }
 
-export default class BaseModel {
-    public static table: string;
+class BunQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<M, R> {
+    async update(payload: Partial<M>): Promise<M[]> {
+        const cloneQuery: QueryBuilder<M, R> = (this as QueryBuilder<M, R>).clone();
 
-    public static query<T extends BaseColumns>(_knex: Knex = null): Knex<T> {
-        if (isEmpty(_knex)) return knex<T>(KnexConfig).from(this.table);
+        const beforeRows: any = await cloneQuery;
 
-        return _knex<T>(this.table);
+        if (isEmpty(beforeRows)) return defineValue(beforeRows);
+
+        await super.update(payload);
+
+        return cloneQuery;
+    }
+}
+
+export default class BaseModel extends Model {
+    public static tableName: string;
+    public static idColumn: string;
+    public static jsonSchema: JSONSchema;
+
+    static QueryBuilder = BunQueryBuilder;
+
+    public static get namespace(): string {
+        const filePath = fileURLToPath(import.meta.url);
+        const appRoot = process.cwd();
+        const rel = relative(appRoot, filePath);
+        const withoutExt = rel.replace(/\.[tj]s$/, "");
+        const namespaces = withoutExt.split(sep);
+        namespaces.pop();
+        namespaces.push(this.name);
+        return namespaces.map(part => new Str().setValue(part).toPascalCase()).join("/");
     }
 
-    public static async all<T extends BaseColumns>(): Promise<Array<T>> {
-        return await this.query<T>().select();
+    $beforeInsert(queryContext: QueryContext): Promise<any> | void {
+        const now = DateTime.now();
+        this.created_at = now;
+        this.updated_at = now;
     }
 
-    public static async create<T extends BaseColumns>(payload: object): Promise<T> {
-        const [row] = await this.query<T>().insert(payload).returning("*");
+    $beforeUpdate(opt: ModelOptions, queryContext: QueryContext): Promise<any> | void {
+        this.updated_at = DateTime.now();
+    }
 
-        return row;
+    public static query<T extends Model>(this: Constructor<T>, trxOrKnex?: TransactionOrKnex): QueryBuilderType<T> {
+        return super.query(trxOrKnex);
+    };
+
+    public static all<T extends Model>(this: T): QueryBuilderType<T> {
+        return this.query<T>().select();
+    }
+
+    public static create<T extends Model>(this: T, payload: Record<string, any>): QueryBuilderType<T> {
+        return this.query<T>().insert(payload);
+    }
+
+    public static find<T extends Model>(this: T, id: bigint | number | string): QueryBuilderType<T> {
+        return this.query<T>().findById(id);
+    }
+
+    public static async findOrFail<T extends Model>(this: T, id: bigint | number | string): Promise<T> {
+        const result = await this.find(id);
+
+        if (isEmpty(result)) throw new ModelNotFoundException(`No query results for model [${this.namespace}] [${id}].`);
+
+        return result;
     }
 }

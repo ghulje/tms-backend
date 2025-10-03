@@ -7,6 +7,7 @@ import KnexConfig from "@/knexfile";
 import {version} from "@/package.json";
 import Chalk from "@/utils/Chalk";
 import Str from "@/utils/Str";
+import "@/bootstrap";
 
 const commandExec = "ace";
 const knex = Knex(KnexConfig);

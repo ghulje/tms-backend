@@ -11,10 +11,12 @@
 # Framework for Bun
 A javascript framework using Bun runtime.
 Designed for backend purposes, using [Knex](https://knexjs.org) for Migrations and Seeders.
+[Objection](https://vincit.github.io/objection.js) for Query Builder, Relation, & Validation.
 
 ## Tech Stacks
 - [Bun](https://bun.com)
 - [Knex](https://knexjs.org)
+- [Objection](https://vincit.github.io/objection.js)
 - [React](https://react.dev) (For home page only)
 
 ## Features
@@ -38,20 +40,66 @@ export default class HelloController extends BaseController {
 }
 ```
 
+### Exception Handler
+Handle any incoming errors
+
+Example :
+
+```ts
+import {ErrorLike} from "bun";
+import Response from "@/utils/Response";
+import {defineValue} from "@/utils/utils";
+
+export default class ExceptionHandler {
+    public handle(error: ErrorLike): globalThis.Response {
+        if (error instanceof ModelNotFoundException) return new Response()
+            .setMessage(error.message)
+            .setStatus(404)
+            .send();
+
+        return new Response()
+            .setMessage(defineValue(error.message, "Internal server error."))
+            .setStatus(500)
+            .send();
+    }
+}
+```
+
 ### Models
 Database table model
 
 Example :
 
 ```ts
+import {JSONSchema} from "objection";
 import BaseModel, {BaseColumns} from "@/app/models/BaseModel";
 
 export interface TestColumns extends BaseColumns {
     name: string;
 }
 
-export default class TestModel extends BaseModel {
-    public static table: string = "tests";
+export default class TestModel extends BaseModel implements TestColumns {
+    public static tableName: string = "tests";
+    public static idColumn: string = "id";
+
+    declare id: bigint;
+    declare name: string;
+    declare created_at: Date | string;
+    declare updated_at: Date | string;
+    declare deleted_at: Date | string | null;
+
+    public static jsonSchema: JSONSchema = {
+        type: "object",
+        required: [
+            "name"
+        ],
+        properties: {
+            name: {
+                type: "string",
+                minLength: 5
+            }
+        }
+    };
 }
 ```
 
@@ -61,13 +109,32 @@ Example :
 ```ts
 import {BunRequest} from "bun";
 import BaseController from "@/app/controllers/BaseController";
-import TestModel, {TestColumns} from "@/app/models/TestModel";
+import TestModel from "@/app/models/TestModel";
 
 export default class TestController extends BaseController {
     public async get(request: BunRequest): Promise<Response> {
-        const tests = await TestModel.all<TestColumns>();
+        const tests = await TestModel.all();
 
         return super.response().setData(tests).send();
+    }
+}
+```
+
+#### Find or Fail
+Example :
+
+```ts
+import {BunRequest} from "bun";
+import BaseController from "@/app/controllers/BaseController";
+import TestModel from "@/app/models/TestModel";
+
+export default class TestController extends BaseController {
+    public async detail(request: BunRequest): Promise<Response> {
+        const body = await super.parse(request);
+
+        const test = await TestModel.findOrFail(body.get("id") as number | string);
+
+        return super.response().setData(test).send();
     }
 }
 ```
@@ -78,15 +145,37 @@ Example :
 ```ts
 import {BunRequest} from "bun";
 import BaseController from "@/app/controllers/BaseController";
-import TestModel, {TestColumns} from "@/app/models/TestModel";
+import TestModel from "@/app/models/TestModel";
 
 export default class TestController extends BaseController {
     public async add(request: BunRequest): Promise<Response> {
         const body = await super.parse(request);
 
-        const tests = await TestModel.create<TestColumns>({
-            name: body.get("name")
+        const tests = await TestModel.create({
+            name: body.get("name") as string
         });
+
+        return super.response().setData(tests).send();
+    }
+}
+```
+
+#### Update
+Example :
+
+```ts
+import {BunRequest} from "bun";
+import BaseController from "@/app/controllers/BaseController";
+import TestModel from "@/app/models/TestModel";
+
+export default class TestController extends BaseController {
+    public async edit(request: BunRequest): Promise<Response> {
+        const body = await super.parse(request);
+
+        const tests = await TestModel.find(body.get("id") as number | string)
+            .update({
+                name: body.get("name") as string
+            });
 
         return super.response().setData(tests).send();
     }
@@ -120,11 +209,11 @@ Example :
 
 ```ts
 import type {Knex} from "knex";
-import TestModel, {TestColumns} from "@/app/models/TestModel";
+import TestModel from "@/app/models/TestModel";
 
 export async function seed(knex: Knex): Promise<void> {
     for (const name of ["Name 1", "Name 2", "Name 3"]) {
-        await TestModel.query<TestColumns>(knex).insert({
+        await TestModel.query(knex).insert({
             name: name
         });
     }
@@ -136,6 +225,27 @@ For public assets
 
 ### Resources
 - Views
+
+### Bootstrap
+Any startup loads
+
+At this time used for :
+- Init model connection
+- Declare custom exception
+
+Example :
+
+```ts
+import knex from "knex";
+import {Model} from "objection";
+import ModelNotFoundException from "@/app/exceptions/ModelNotFoundException";
+import KnexConfig from "@/knexfile";
+
+// @ts-ignore
+global.ModelNotFoundException = ModelNotFoundException;
+
+Model.knex(knex(KnexConfig));
+```
 
 ### Ace
 Any commands for development
@@ -282,9 +392,7 @@ bun start
 ```
 
 ## Upcoming Features
-- [ ] Validate Request
 - [ ] Soft Deletes
-- [ ] Exception Handler
 - [ ] Middleware
   
 ## Backlog

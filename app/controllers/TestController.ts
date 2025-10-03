@@ -1,20 +1,39 @@
 import {BunRequest} from "bun";
 import BaseController from "@/app/controllers/BaseController";
-import TestModel, {TestColumns} from "@/app/models/TestModel";
+import TestModel from "@/app/models/TestModel";
 
 export default class TestController extends BaseController {
     public async get(request: BunRequest): Promise<Response> {
-        const tests = await TestModel.all<TestColumns>();
+        const tests = await TestModel.all();
 
         return super.response().setData(tests).send();
+    }
+
+    public async detail(request: BunRequest): Promise<Response> {
+        const body = await super.parse(request);
+
+        const test = await TestModel.findOrFail(body.get("id") as number | string);
+
+        return super.response().setData(test).send();
     }
 
     public async add(request: BunRequest): Promise<Response> {
         const body = await super.parse(request);
 
-        const tests = await TestModel.create<TestColumns>({
-            name: body.get("name")
+        const tests = await TestModel.create({
+            name: body.get("name") as string
         });
+
+        return super.response().setData(tests).send();
+    }
+
+    public async edit(request: BunRequest): Promise<Response> {
+        const body = await super.parse(request);
+
+        const tests = await TestModel.find(body.get("id") as number | string)
+            .update({
+                name: body.get("name") as string
+            });
 
         return super.response().setData(tests).send();
     }

@@ -12,7 +12,7 @@ export function App() {
             </div>
 
             <h1>Bun + React</h1>
-            <p>Edit <code>src/App.tsx</code> and save to test HMR</p>
+            <p>Edit <code>resources/views/App.tsx</code> and save to test HMR</p>
 
             <ApiTester/>
         </div>
