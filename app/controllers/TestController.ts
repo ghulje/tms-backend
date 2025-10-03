@@ -37,4 +37,12 @@ export default class TestController extends BaseController {
 
         return super.response().setData(tests).send();
     }
+
+    public async delete(request: BunRequest): Promise<Response> {
+        const body = await super.parse(request);
+
+        const tests = await TestModel.find(body.get("id") as number | string).delete();
+
+        return super.response().setData(tests).send();
+    }
 }

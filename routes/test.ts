@@ -13,5 +13,8 @@ export default new Router().prefix("test").group({
     },
     "edit": {
         POST: new TestController().edit
+    },
+    "delete/:id": {
+        DELETE: new TestController().delete
     }
 });
